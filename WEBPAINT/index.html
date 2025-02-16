@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paint App MSCORP2024</title>
+  <style>
+    /* General Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      height: 100vh;
+      background: linear-gradient(135deg, #ff7eb3, #ff758c, #ff647c);
+      font-family: 'Arial', sans-serif;
+      color: white;
+    }
+
+    h1 {
+      margin: 20px 0;
+      font-size: 2.5em;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    #canvas-container {
+      flex: 1;
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+    }
+
+    canvas {
+      background-color: white;
+      border: 2px solid rgba(0, 0, 0, 0.2);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      max-width: 100%;
+    }
+
+    .tools-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      max-width: 900px;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .tool-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 14px;
+      color: black;
+    }
+
+    .tool-item label {
+      margin-bottom: 5px;
+    }
+
+    .tools-container input,
+    .tools-container button {
+      padding: 8px;
+      border: none;
+      border-radius: 5px;
+      outline: none;
+      font-size: 14px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .tools-container button {
+      background-color: #4caf50;
+      color: white;
+      transition: background 0.3s ease;
+    }
+
+    .tools-container button:hover {
+      background-color: #388e3c;
+    }
+
+    .tools-container button.active {
+      background-color: #d32f2f;
+    }
+
+    .gradient-tools {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+      canvas {
+        width: 90%;
+        height: auto;
+      }
+
+      h1 {
+        font-size: 1.8em;
+      }
+
+      .tools-container {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1 style=" margin: 0;">Paint App</h1>
+  <div id="canvas-container">
+    <canvas id="paintCanvas"></canvas>
+  </div>
+  <div class="tools-container">
+    <div class="tool-item">
+      <label for="color">Brush Color</label>
+      <input type="color" id="color" value="#000000">
+    </div>
+    <div class="tool-item">
+      <label for="brushSize">Brush Size</label>
+      <input type="range" id="brushSize" min="1" max="20" value="5">
+    </div>
+    <div class="tool-item">
+      <label for="eraserSize">Eraser Size</label>
+      <input type="range" id="eraserSize" min="5" max="50" value="20">
+    </div>
+    <button id="eraser">Eraser</button>
+    <button id="clear">Clear Canvas</button>
+    <button id="gradientMode">Gradient Brush</button>
+  </div>
+  <div class="gradient-tools" id="gradientTools" style="display: none;">
+    <label for="gradientStart">Start Color</label>
+    <input type="color" id="gradientStart" value="#ff0000">
+    <label for="gradientEnd">End Color</label>
+    <input type="color" id="gradientEnd" value="#0000ff">
+  </div>
+
+  <script>
+    const canvas = document.getElementById('paintCanvas');
+    const ctx = canvas.getContext('2d');
+
+    
+    let painting = false;
+    let erasing = false;
+    let gradientMode = false;
+    let brushSize = 5;
+    let eraserSize = 20;
+    let brushColor = '#000000';
+    let gradientStart = '#ff0000';
+    let gradientEnd = '#0000ff';
+
+    const gradientTools = document.getElementById('gradientTools');
+    const eraserButton = document.getElementById('eraser');
+
+    // Responsive canvas setup
+    function adjustCanvasSize() {
+      canvas.width = window.innerWidth < 800 ? window.innerWidth * 0.9 : 800;
+      canvas.height = canvas.width * 0.625; // Keep aspect ratio
+    }
+    adjustCanvasSize();
+    window.addEventListener('resize', adjustCanvasSize);
+
+    // Start and stop painting
+    function startPainting(e) {
+      painting = true;
+      draw(e);
+    }
+
+    function stopPainting() {
+      painting = false;
+      ctx.beginPath();
+    }
+
+    // Drawing logic
+    function draw(e) {
+      if (!painting) return;
+      const pos = getPos(e);
+
+      if (gradientMode) {
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        gradient.addColorStop(0, gradientStart);
+        gradient.addColorStop(1, gradientEnd);
+        ctx.strokeStyle = gradient;
+      } else {
+        ctx.strokeStyle = erasing ? '#ffffff' : brushColor;
+      }
+      
+      ctx.lineWidth = erasing ? eraserSize : brushSize;
+      ctx.lineCap = 'round';
+
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+    }
+
+    function getPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: (e.clientX || e.touches[0].clientX) - rect.left,
+        y: (e.clientY || e.touches[0].clientY) - rect.top
+      };
+    }
+
+    // Event Listeners
+    canvas.addEventListener('mousedown', startPainting);
+    canvas.addEventListener('mouseup', stopPainting);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseleave', stopPainting);
+
+    canvas.addEventListener('touchstart', (e) => startPainting(e));
+    canvas.addEventListener('touchend', stopPainting);
+    canvas.addEventListener('touchmove', (e) => draw(e));
+
+    document.getElementById('color').addEventListener('input', (e) => {
+      brushColor = e.target.value;
+      if (!erasing) {
+        ctx.strokeStyle = brushColor;
+      }
+    });
+
+    document.getElementById('brushSize').addEventListener('input', (e) => brushSize = e.target.value);
+    document.getElementById('eraserSize').addEventListener('input', (e) => eraserSize = e.target.value);
+
+    eraserButton.addEventListener('click', () => {
+      erasing = !erasing;
+      gradientMode = false;
+      gradientTools.style.display = 'none';
+
+      if (erasing) {
+        eraserButton.classList.add('active');
+      } else {
+        eraserButton.classList.remove('active');
+        ctx.strokeStyle = brushColor;
+      }
+    });
+
+    document.getElementById('clear').addEventListener('click', () => ctx.clearRect(0, 0, canvas.width, canvas.height));
+
+    document.getElementById('gradientMode').addEventListener('click', (e) => {
+  gradientMode = !gradientMode; // Toggle gradient mode
+  erasing = false; // Ensure eraser mode is off
+  eraserButton.classList.remove('active'); // Remove eraser active class
+
+  if (gradientMode) {
+    gradientTools.style.display = 'flex';
+    e.target.classList.add('active'); // Highlight the gradient button
+  } else {
+    gradientTools.style.display = 'none';
+    ctx.strokeStyle = brushColor; // Set back to normal brush color
+    e.target.classList.remove('active'); // Remove gradient button highlight
+  }
+});
+
+
+    document.getElementById('gradientStart').addEventListener('input', (e) => gradientStart = e.target.value);
+    document.getElementById('gradientEnd').addEventListener('input', (e) => gradientEnd = e.target.value);
+  </script>
+  <div style="text-align: center; margin-top: 20px; font-size: 14px; color: white;">
+    &copy; 2024 All rights reserved to MS Corporation
+  </div>
+  
+</body>
+</html>

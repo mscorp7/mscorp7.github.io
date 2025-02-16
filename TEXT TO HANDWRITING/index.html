@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to Handwriting</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <textarea id="inputText" placeholder="Type your text here..."></textarea>
+        
+        <div class="form-group">
+            <label for="fontSelector">Choose Font:</label>
+            <select id="fontSelector">
+                <option value="handwr.ttf">Handwriting Style 1</option>
+                <option value="handwr1.ttf">Handwriting Style 2</option>
+            </select>
+
+            <label for="colorPicker">Ink Color:</label>
+            <input type="color" id="colorPicker" value="#000000">
+        </div>
+
+        <div class="form-group">
+            <label for="fontSize">Font Size:</label>
+            <input type="range" id="fontSize" min="20" max="50" value="30">
+        </div>
+
+        <button id="generateButton">Generate Handwriting</button>
+
+        <canvas id="handwritingCanvas" width="800" height="400"></canvas>
+
+        <div class="button-container">
+            <button id="downloadButton">Download as Image</button>
+            <button id="resetButton">Reset</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <div style="text-align: center; margin-top: 20px; font-size: 14px; color: white;">
+        &copy; 2024 All rights reserved to MS Corporation
+      </div>      
+</body>
+</html>

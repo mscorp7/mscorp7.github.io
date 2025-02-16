@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Slide Puzzle</title>
+        <style>
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+                text-align: center;
+                color: #ffffff;
+                overflow-x: hidden;
+                margin: 0%;
+                 
+            }
+
+
+body::before {
+    content: "";
+    background: url('peakpx.jpg') no-repeat center center fixed;
+    background-size: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    z-index: -1; /* Place the background behind content */
+    filter: brightness(25%);
+}
+
+            #title {
+                height: 130px;
+                width: 300px;
+                opacity: 0.5;
+            }
+
+            #board {
+                width: 360px;
+                height: 360px;
+                background-color: lightblue;
+                border: 7px solid #5d00ff;
+                margin: 0 auto;
+                display: flex;
+                flex-wrap: wrap;
+                border-radius: 10px;
+            }
+
+            #board img {
+                width: 118px;
+                height: 118px;
+                border: 1px solid #0c67ae;
+            }
+
+            button {
+                padding: 10px 20px;
+                background-color: #0c67ae;
+                color: white;
+                border: none;
+                font-size: 16px;
+                cursor: pointer;
+                margin-top: 20px;
+            }
+
+            button:hover {
+                background-color: #084c75;
+            }
+        </style>
+    </head>
+
+    <body>
+        <img id="title" src="./logo.png">
+        <div id="board"></div>
+        <h1>Turns: <span id="turns">0</span></h1>
+        <button id="autoSolveBtn">Auto Solve</button>
+        
+        <script>
+         var rows = 3;
+var columns = 3;
+var currTile;
+var otherTile; // blank tile
+var turns = 0;
+var imgOrder = ["4", "2", "8", "5", "1", "6", "7", "9", "3"];
+
+window.onload = function() {
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < columns; c++) {
+            let tile = document.createElement("img");
+            tile.id = r.toString() + "-" + c.toString();
+            tile.src = imgOrder.shift() + ".jpg";
+
+            // DRAG AND TOUCH FUNCTIONALITY
+            tile.addEventListener("dragstart", dragStart);
+            tile.addEventListener("dragover", dragOver);
+            tile.addEventListener("dragenter", dragEnter);
+            tile.addEventListener("dragleave", dragLeave);
+            tile.addEventListener("drop", dragDrop);
+            tile.addEventListener("dragend", dragEnd);
+
+            // Touch events for mobile support
+            tile.addEventListener("touchstart", touchStart, {passive: false});
+            tile.addEventListener("touchmove", touchMove, {passive: false});
+            tile.addEventListener("touchend", touchEnd);
+
+            document.getElementById("board").append(tile);
+        }
+    }
+
+    // Auto solve button functionality
+    document.getElementById("autoSolveBtn").addEventListener("click", autoSolve);
+}
+
+function dragStart() {
+    currTile = this;
+}
+
+function dragOver(e) {
+    e.preventDefault();
+}
+
+function dragEnter(e) {
+    e.preventDefault();
+}
+
+function dragLeave() {}
+
+function dragDrop() {
+    otherTile = this;
+}
+
+function dragEnd() {
+    if (!otherTile.src.includes("3.jpg")) {
+        return;
+    }
+
+    let currCoords = currTile.id.split("-");
+    let r = parseInt(currCoords[0]);
+    let c = parseInt(currCoords[1]);
+
+    let otherCoords = otherTile.id.split("-");
+    let r2 = parseInt(otherCoords[0]);
+    let c2 = parseInt(otherCoords[1]);
+
+    let moveLeft = r == r2 && c2 == c - 1;
+    let moveRight = r == r2 && c2 == c + 1;
+    let moveUp = c == c2 && r2 == r - 1;
+    let moveDown = c == c2 && r2 == r + 1;
+
+    let isAdjacent = moveLeft || moveRight || moveUp || moveDown;
+
+    if (isAdjacent) {
+        let currImg = currTile.src;
+        let otherImg = otherTile.src;
+
+        currTile.src = otherImg;
+        otherTile.src = currImg;
+
+        turns += 1;
+        document.getElementById("turns").innerText = turns;
+
+        // Check for win condition
+        if (checkWin()) {
+            setTimeout(() => {
+                alert("🎉 Congratulations! You solved the puzzle in " + turns + " turns!");
+            }, 200); // Delay alert for better experience
+        }
+    }
+}
+
+
+function checkWin() {
+    let board = document.getElementById("board");
+    let tiles = board.getElementsByTagName("img");
+    let correctOrder = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+
+    for (let i = 0; i < tiles.length; i++) {
+        if (!tiles[i].src.includes(correctOrder[i] + ".jpg")) {
+            return false; // Puzzle is not yet solved
+        }
+    }
+
+    return true; // Puzzle solved
+}
+
+// Touch event handling for mobile devices
+function touchStart(e) {
+    e.preventDefault();
+    currTile = this;
+}
+
+function touchMove(e) {
+    e.preventDefault();
+    // You can add some logic to track the tile's movement while dragging here if necessary
+}
+
+function touchEnd(e) {
+    e.preventDefault();
+    let touch = e.changedTouches[0];
+    let target = document.elementFromPoint(touch.clientX, touch.clientY);
+
+    if (target && target.tagName === "IMG" && target !== currTile) {
+        otherTile = target;
+        dragEnd();
+    }
+}
+
+// Function to automatically solve the puzzle
+function autoSolve() {
+    imgOrder = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+    let board = document.getElementById("board");
+    let tiles = board.getElementsByTagName("img");
+
+    let index = 0;
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < columns; c++) {
+            let tile = tiles[index++];
+            tile.src = imgOrder.shift() + ".jpg";
+        }
+    }
+
+    turns = 0;
+    document.getElementById("turns").innerText = turns;
+}
+
+        </script>
+        <div style="text-align: center; margin-top: 20px; font-size: 14px; color: white;">
+            &copy; 2024 All rights reserved to MS Corporation
+          </div>
+          
+    </body>
+</html>
