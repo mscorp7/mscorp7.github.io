@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://db.onlinewebfonts.com/c/f3258385782c4c96aa24fe8b5d5f9782?family=Old+English+Text+MT"
+        rel="stylesheet">
+    <title>Multiplication Table(By~MS)</title>
+    <style>
+        ul {
+            list-style: none;
+            border: 1px solid black;
+            padding: 0px;
+        }
+
+        body {
+            text-align: center;
+
+        }
+
+        li {
+            font-family: Algerian;
+            background: linear-gradient(to left, yellow, orange, red, blue, rgb(0, 162, 255), rgb(21, 255, 0));
+            color: azure;
+            font-size: 30px;
+            /* animation-name: lit;
+                transition: all ease-out 0.5s;
+                animation-iteration-count: 100;
+                animation-duration: 2s; */
+        }
+
+        label {
+            text-transform: capitalize;
+            font-size: 30px;
+
+        }
+
+        h1 {
+            font-size: 50px;
+            font-family: Old English Text MT;
+            text-decoration: underline;
+            text-shadow: 1px 2px green;
+        }
+
+        #number,
+        button {
+            font-size: 30px;
+            font-family: Algerian;
+            color: blue;
+            border-radius: 20px;
+            border: 2px solid black;
+            background: white;
+            text-align: center;
+            transition: background-color 0.4s;
+        }
+
+        button:hover {
+            background-color: blue;
+            color: white;
+            cursor: pointer;
+        }
+
+        #number {
+            width: 200px;
+        }
+
+        /* 
+             @keyframes lit {
+            25%
+            {
+                background: linear-gradient(to left, yellow,orange,rgb(0, 255, 242),rgb(255, 0, 0),rgb(55, 255, 0),rgb(21, 255, 0));
+            }
+            50%{
+                background: linear-gradient(to left, rgb(0, 255, 42),rgb(0, 55, 255),red,rgb(255, 0, 144),rgb(0, 162, 255),rgb(255, 255, 0));
+            }
+            75%{
+                background: linear-gradient(to left, rgb(255, 0, 179),rgb(0, 255, 34),rgb(255, 242, 0),blue,rgb(255, 0, 0),rgb(242, 255, 0));
+            }
+            100%{
+                background: linear-gradient(to left, rgb(255, 0, 0),rgb(0, 255, 136),rgb(76, 0, 255),rgb(111, 255, 0),rgb(0, 162, 255),rgb(255, 187, 0));
+}
+             }*/
+        #mode1 {
+            color: white;
+            float: right;
+            background-color: black;
+            /* outline:auto;
+outline-color: rgb(25, 0, 255); */
+            cursor: grab;
+            box-shadow: -1px -4px gray;
+
+        }
+
+        #main1 {
+            width: 100%;
+            height: 50px;
+        }
+
+        #range1 {
+            width: 900px;
+        }
+
+        @media screen and (max-width:800px) {
+            #range1 {
+                width: 300px;
+            }
+
+        }
+    </style>
+
+</head>
+
+<body bgcolor="white">
+    <div id="main1">
+        <button id="mode1" onclick="mode2()">Dark</button>
+    </div>
+    
+
+    <h1 contenteditable="">Multiplication Table Generator</h1>
+
+    <label for="number">Enter a number :</label><br>
+    <input type="number" id="number" min="1">
+
+    <button id="gnrt" onclick="generateTable(onclick)">Generate Table</button>
+    <ul id="multiplicationTable"></ul>
+    <input type="range" name="range1" id="range1" value="10">
+
+    <script>
+        // document.write("<p>nothing</p>");
+        function generateTable(onclick) {
+            const numberInput = document.getElementById("number");
+            const multiplicationTable = document.getElementById("multiplicationTable");
+            const number = parseInt(numberInput.value);
+            multiplicationTable.innerHTML = `<h3>${number}'s Table Is Following:`; // Clear previous table if any
+
+
+
+            if ((number)) {
+                for (let i = 1; i <= 10; i++) {
+                    const result = number * i;
+                    const listItem = document.createElement("li");
+                    listItem.textContent = `${number} x ${i} = ${result}`;
+                    multiplicationTable.appendChild(listItem);
+                }
+            } else {
+                alert("Please enter a valid number.");
+            }
+        }
+
+        function mode2(onclick) {
+            let texts = document.querySelectorAll("body h1,label,ul");
+            var modebtn = document.getElementById("mode1");
+
+            var gnrtinp = document.getElementById("number");
+            var ul_1 = document.getElementById("multiplicationTable");
+            let gnrt1 = document.getElementById('gnrt');
+            const body1 = document.body;
+            if (modebtn.textContent.includes('Dark')) {
+                document.bgColor = "black";
+                modebtn.style.backgroundColor = "white";
+                modebtn.style.color = "black";
+                modebtn.textContent = "Light";
+                modebtn.style.float = "left";
+                gnrt1.style.borderColor = "blue";
+                texts.forEach(text => { text.style.color = "white"; });
+                gnrtinp.style.borderColor = "blue";
+                ul_1.style.borderColor = "white";
+                body1.style.transitionDuration = "1s";
+                //  body1.style.backgroundImage="url('text111.png')";
+                body1.style.backgroundImage = "url('favicon.png')";
+                body1.style.backgroundSize = "100px";
+                body1.style.backgroundRepeat = "no-repeat";
+                body1.style.backgroundPosition = "center";
+                body1.style.backgroundPositionY = "10px";
+            }
+            else {
+                document.bgColor = "white";
+                modebtn.textContent = "Dark";
+                modebtn.style.backgroundColor = "black";
+                texts.forEach(text => { text.style.color = "black"; });
+                modebtn.style.color = "white";
+                gnrt1.style.borderColor = "black";
+                gnrtinp.style.borderColor = "black";
+                ul_1.style.borderColor = "black";
+                modebtn.style.float = "right";
+                body1.style.transitionDuration = "1s";
+                //body1.style.backgroundImage="url('BK.png')";
+                body1.style.backgroundImage = "url('favicon1.png')";
+                body1.style.backgroundSize = "100px";
+                body1.style.backgroundRepeat = "no-repeat";
+                body1.style.backgroundPosition = "center";
+                body1.style.backgroundPositionY = "10px";
+
+            }
+        }
+        var range11 = document.getElementById("range1");
+        range11.addEventListener("input", function () {
+            let value1 = range11.value; const body1 = document.body;
+            if (value1 <= "10") {
+                document.bgColor = "green";
+            } else if (value1 <= "20") {
+                document.bgColor = "yellow";
+            }
+            else if (value1 <= "30") {
+                document.bgColor = "blue";
+            }
+            else if (value1 <= "40") {
+                document.bgColor = "pink";
+            }
+            else if (value1 <= "50") {
+                document.bgColor = "magenta";
+            }
+            else if (value1 <= "60") {
+                document.bgColor = "green";
+            }
+            else if (value1 <= "70") {
+                document.bgColor = "orange";
+            }
+            else if (value1 <= "80") {
+                document.bgColor = "skyblue";
+            }
+            else if (value1 <= "90") {
+                document.bgColor = "purple";
+            }
+            else if (value1 <= "100") {
+
+            }
+            else {
+                document.bgColor = "white";
+            }
+
+        });
+    </script>
+    <br>
+    
+
+    <script>
+        var canx = document.getElementById('canvr');
+        var ctx = canx.getContext("2d");
+        ctx.rect(20, 20, 150, 50);
+        ctx.stroke();
+
+        var canx = document.getElementById('canvc');
+        var ctx = canx.getContext("2d");
+        ctx.arc(95, 50, 40, 0, 5 * Math.PI);
+        ctx.stroke();
+    </script>
+
+   
+<div style="text-align: center; margin-top: 20px; font-size: 14px; color: black;">
+  &copy; 2023 All rights reserved to Mahavirsinh Sodha
+</div>
+
+
+</body>
+
+</html>
