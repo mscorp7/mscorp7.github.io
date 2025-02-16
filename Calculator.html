@@ -1,0 +1,191 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator - By Mahavir</title>
+  <style>
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Body Styling */
+    html, body {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      font-family: 'Roboto', sans-serif;
+      display: grid;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Container Styling */
+    .container {
+      width: 100%;
+      max-width: 400px;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Title */
+    .text-center {
+      text-align: center;
+      color: #fff;
+      font-size: 36px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    /* Input Field */
+    input {
+      width: 100%;
+      font-size: 36px;
+      padding: 15px;
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 20px;
+      text-align: right;
+      background-color: #333;
+      color: #fff;
+      box-shadow: inset 0px 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Button Styles */
+    .button {
+      width: 60px;
+      height: 60px;
+      margin: 5px;
+      border: none;
+      border-radius: 10px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #fff;
+      background-color: #4b4b4b;
+      transition: background-color 0.3s, transform 0.2s;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      background-color: #6d6d6d;
+      transform: scale(1.1);
+    }
+
+    .button:active {
+      background-color: #3d3d3d;
+    }
+
+    .button-clear {
+      background-color: #ff4040;
+    }
+
+    .button-clear:hover {
+      background-color: #ff0000;
+    }
+
+    .button-equal {
+      background-color: #4CAF50;
+    }
+
+    .button-equal:hover {
+      background-color: #45a049;
+    }
+
+    /* Flex Grid for Buttons */
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    /* Responsive Design */
+    @media screen and (max-width: 600px) {
+      .container {
+        max-width: 100%;
+        padding: 15px;
+      }
+
+      input {
+        font-size: 28px;
+      }
+
+      .button {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1 class="text-center">Calculator</h1>
+    <input class="input" type="text" readonly/>
+    
+    <!-- Button Rows -->
+    <div class="row">
+      <button class="button button-clear">C</button>
+      <button class="button">%</button>
+      <button class="button">M+</button>
+      <button class="button">M-</button>
+    </div>
+    <div class="row">
+      <button class="button">7</button>
+      <button class="button">8</button>
+      <button class="button">9</button>
+      <button class="button">*</button>
+    </div>
+    <div class="row">
+      <button class="button">4</button>
+      <button class="button">5</button>
+      <button class="button">6</button>
+      <button class="button">/</button>
+    </div>
+    <div class="row">
+      <button class="button">1</button>
+      <button class="button">2</button>
+      <button class="button">3</button>
+      <button class="button">+</button>
+    </div>
+    <div class="row">
+      <button class="button">0</button>
+      <button class="button">.</button>
+      <button class="button button-equal">=</button>
+      <button class="button">-</button>
+    </div>
+  </div>
+
+  <script>
+    let string = "";
+    let buttons = document.querySelectorAll('.button');
+    Array.from(buttons).forEach((button) => {
+      button.addEventListener('click', (e) => {
+        if (e.target.innerHTML == '=') {
+          try {
+            string = eval(string);
+            document.querySelector('input').value = string;
+          } catch (err) {
+            document.querySelector('input').value = "Error";
+            string = "";
+          }
+        } else if (e.target.innerHTML == 'C') {
+          string = "";
+          document.querySelector('input').value = string;
+        } else {
+          string = string + e.target.innerHTML;
+          document.querySelector('input').value = string;
+        }
+      });
+    });
+  </script>
+<div style="text-align: center; margin-top: 20px; font-size: 14px; color: white;">
+  &copy; 2022 All rights reserved to MS Corporation
+</div>
+
+</body>
+</html>
