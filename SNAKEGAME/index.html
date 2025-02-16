@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game For PC-&-SmartPhone</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<h1>SNAKE GAME</h1>
+<h6 style="margin:0;">MS Corporation</h6>
+<canvas id="gameCanvas"></canvas>
+<div class="controls">
+    <select id="speedSelector">
+        <option value="200">Easy</option>
+        <option value="100">Moderate</option>
+        <option value="50">High</option>
+    </select>
+    <button id="startBtn">Start Game</button>
+    <button id="restartBtn" style="display: none;">Restart Game</button>
+</div>
+
+<div class="direction-buttons">
+    <button id="leftBtn">←</button>
+    <div class="middle">
+        <button id="upBtn">↑</button>
+        <button id="downBtn">↓</button>
+    </div>
+    <button id="rightBtn">→</button>
+</div>
+
+<div class="game-over" id="gameOverMessage" style="display: none;">Game Over!</div>
+<div style="text-align: center; margin-top: 20px; font-size: 14px; color: white;">
+    &copy; 2024 All rights reserved to MS Corporation
+  </div>
+  
+
+<script src="script.js"></script>
+
+</body>
+</html>
