@@ -1,0 +1,151 @@
+<html>
+  <head>
+    <title>Add-Names</title>
+  </head>
+  <style>
+  body{
+    text-align: center;
+    margin: 20;
+    background: url(Light.png);
+    background-position: center;
+    
+  }
+    input,#add_btn{font-size: 50px;
+    font-weight: 900;
+    color:#ff7f7f ;
+    border: 0.5px solid rgb(255, 0, 115);
+    
+    }
+    h1{ color:#00ff75;
+      background-color: #3c3c3c;
+      font-family: cursive;
+    }
+    li{
+      font-size: 20px;
+      color: #000000;
+      background: linear-gradient(to right,red,yellow,green,blue);
+      font-family: Algerian Regular;
+      font-weight: 900;
+      
+      
+    }
+   #add_btn{ color: #2715ff;
+background: #4dd4ff;
+border-radius: 10%;
+   }
+ .edit_btn{
+   color: #ff0142;
+   background-color: #fffb00;
+   font-size: 20px;
+   border-radius: 10%;
+ }
+  .remove_btn{
+   color: #fffb00;
+   background-color: #ff0142;
+    font-size: 20px;
+    border-radius: 10%;
+  }
+   .emptyMsg{
+  color: #000000;
+animation-name: emptymsg;
+transition: ease all ;
+animation-duration: 1s;
+animation-iteration-count: 100;
+   }
+   @keyframes emptymsg{
+    0%
+    {
+      color: #00ff75;
+    }
+    25%
+    {
+      color: #ff0000;
+    }
+    50%
+    {
+      color: #0040ff;
+    }70%
+    {
+      color: #ffea00;
+    }100%
+    {
+      color: #00b3ff;
+    }
+   }
+</style>
+  <body>
+    <h1>(Type Anything Here...)</h1>
+    <input type="text" class="namef" placeholder="Type Name..." >
+    <button id="add_btn">Add</button>
+ 
+   <ol type="I" id="parentList">
+     <!--li-- class="name1"><h6>names</h6><button class="edit_btn" onclick="editb(this)">Edit</button>
+     <button class="remove_btn" onclick="removeb(this)">Remove</button>
+      </li-->
+    </ol>
+    <script>
+      let addbtn=document.getElementById('add_btn');
+      addbtn.addEventListener('click',addname);
+      
+      function addname(e){
+        
+
+        let currentBtn=e.currentTarget;
+        let currentInput=currentBtn.previousElementSibling;
+        let currentName=currentInput.value;
+              
+        let newLi=document.createElement('li');
+          
+       newLi.className="name1";
+       newLi.innerHTML=`<h3  title= 
+       "Generated NAME">${currentName}</h3><button class="edit_btn" onclick="editb(this)" title= 
+       "EDIT NAME"
+       >Edit</button>&nbsp;&nbsp;<button class="remove_btn" onclick="removeb(this)"  title= 
+       "Rename NAME">Remove</button></li>`
+       
+        let parentList=document.getElementById('parentList');
+        
+        parentList.appendChild(newLi);
+
+       if(parentList.children[0].className=="emptyMsg"){
+        parentList.children[0].remove();
+      }
+      }
+  function removeb(cElement){
+    cElement.parentElement.remove();
+    let parentList=document.getElementById('parentList');
+    if(parentList.children.length<=0){
+      let newEmes=document.createElement("h2");
+      newEmes.classList.add("emptyMsg");
+      newEmes.textContent="Nothing Is Here !";
+      parentList.appendChild(newEmes);
+    }
+    
+  }
+  function editb(cElement){
+    if(cElement.textContent=="Done"){
+      cElement.textContent="Edit";
+      let cEname=cElement.previousElementSibling.value;
+      let chead=document.createElement('h3');
+      chead.textContent=cEname;
+cElement.parentElement.replaceChild(chead, cElement.previousElementSibling);
+    }else{
+      cElement.textContent="Done";
+    let cEname=cElement.previousElementSibling.textContent;
+    let cInput=document.createElement('input');
+    cInput.type="text";
+    cInput.className="namef";
+    cInput.value=cEname;
+cElement.parentElement.replaceChild(cInput,cElement.previousElementSibling);
+    }
+    
+    
+  }
+   
+    </script>
+    <div style="text-align: center; margin-top: 20px; font-size: 14px; color: white;">
+  &copy; 2022 All rights reserved to MS Corporation
+</div>
+
+  </body>
+</html>

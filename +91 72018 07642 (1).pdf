@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html class="vue-app">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8;" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Evolution | DirectAdmin</title>
+        <link
+            rel="shortcut icon"
+            href="/evo/assets/favicon.CDLA4ANV.png"
+            type="image/x-icon"
+        />
+        <style lang="scss">
+            @layer reset, legacy, elements, util, important;
+            
+            .root-preloader {
+                display: flex;
+                width: 100vw;
+                height: 100vh;
+                align-items: center;
+                justify-content: center;
+                background: #fff;
+            }
+            
+            .root-preloader > .spinner {
+                max-width: 320px !important;
+            }
+            
+            .--dark .root-preloader {
+                background-color: #121212;
+            }
+        </style>
+      <script type="module" crossorigin src="/evo/index.CvyRjYsN.js"></script>
+      <link rel="stylesheet" crossorigin href="/evo/assets/index.Bt77wPgp.css">
+    </head>
+    <body>
+        <div id="root">
+            <div class="root-preloader">
+                <img
+                    class="spinner"
+                    src="data:image/svg+xml,%3c?xml%20version='1.0'%20encoding='UTF-8'?%3e%3csvg%20xmlns='http://www.w3.org/2000/svg'%20xmlns:xlink='http://www.w3.org/1999/xlink'%20x='0px'%20y='0px'%20viewBox='0%200%2088%20102.2'%20xml:space='preserve'%20style='enable-background:new%200%200%2088%20102.2;%20transform:%20scale(.25);'%20%3e%3cstyle%3e%20.st2{fill:%230682B4;}%20.st3{fill:%2331B7E9;}%20%23mask%20{%20transform-origin:%2070px%2050px;%20animation-name:%20animateMask;%20animation-duration:%205s;%20animation-direction:%20alternate;%20animation-iteration-count:%20infinite;%20animation-delay:%200.5s;%20transform:%20rotate(45deg)%20scale(0.125);%20}%20@keyframes%20animateMask%20{%2010%25%20{%20transform:%20rotate(45deg)%20scale(.125);%20}%2080%25,%20100%25%20{%20transform:%20rotate(360deg)%20scale(1);%20}%20}%20%3c/style%3e%3cdefs%3e%3cclipPath%20id='clip-mask'%3e%3crect%20x='0'%20y='0'%20width='108'%20height='108'%20id='mask'%20rx='12'%20/%3e%3c/clipPath%3e%3c/defs%3e%3cg%20clip-path='url(%23clip-mask)'%3e%3cpolygon%20class='st2'%20points='88,52.6%2088,52.6%2038.4,3%2024.2,17.2%2059.7,52.6%2024.3,88%2038.4,102.2%20'%20/%3e%3cpolygon%20class='st3'%20points='85,49.6%2085,49.6%2035.4,0%2021.2,14.2%2056.7,49.6%2021.3,85%2035.4,99.2%20'%20/%3e%3cpolyline%20class='st2'%20points='10.6,74.4%2014.2,78%2042.5,49.6%2038.7,45.8%20'%20/%3e%3cpolyline%20class='st3'%20points='38.7,45.9%2014.2,21.3%200,35.4%2014.2,49.6%200,63.8%2010.6,74.4%20'%20/%3e%3c/g%3e%3c/svg%3e"
+                    alt="Preloader Image"
+                />
+            </div>
+        </div>
+        <div id="foot" />
+
+
+        <div id="portal-targets">
+            <div id="dialog-host" class="dialog-host"></div>
+            <div id="overlay-host" class="overlay-host"></div>
+            <div id="tether-host" class="tether-host"></div>
+        </div>
+    </body>
+</html>
