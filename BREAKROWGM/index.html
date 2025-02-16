@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breakout Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: grid;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            border: 2px solid #ffffff;
+            border-radius: 8px;
+            background: linear-gradient(180deg, #1a1a1a, #333333);
+            max-width: 100%;
+            max-height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="breakoutCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('breakoutCanvas');
+        canvas.width = Math.min(window.innerWidth * 0.9, 800);
+        canvas.height = Math.min(window.innerHeight * 0.8, 600);
+        const ctx = canvas.getContext('2d');
+
+        const paddle = {
+            width: canvas.width * 0.2,
+            height: 10,
+            x: canvas.width / 2 - (canvas.width * 0.2) / 2,
+            y: canvas.height - 20,
+            dx: 7,
+            color: '#ff9800',
+        };
+
+        const ball = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            radius: 10,
+            dx: 4,
+            dy: -4,
+            gradient: null,
+        };
+
+        const brick = {
+            rows: 5,
+            cols: 8,
+            width: (canvas.width - 60) / 8,
+            height: 20,
+            padding: 10,
+            offsetTop: 30,
+            offsetLeft: 30,
+            colors: ['#ff5722', '#ff9800', '#ffc107', '#8bc34a', '#03a9f4'],
+        };
+
+        let bricks = [];
+        let score = 0;
+
+        function initBricks() {
+            brick.width = (canvas.width - (brick.cols - 1) * brick.padding - 2 * brick.offsetLeft) / brick.cols;
+            bricks = [];
+            for (let row = 0; row < brick.rows; row++) {
+                bricks[row] = [];
+                for (let col = 0; col < brick.cols; col++) {
+                    bricks[row][col] = { x: 0, y: 0, status: 1 };
+                }
+            }
+        }
+
+        function resetGame() {
+            score = 0;
+            ball.x = canvas.width / 2;
+            ball.y = canvas.height / 2;
+            ball.dx = 4;
+            ball.dy = -4;
+            paddle.x = canvas.width / 2 - paddle.width / 2;
+            initBricks();
+        }
+
+        initBricks();
+
+        function drawPaddle() {
+            ctx.fillStyle = paddle.color;
+            ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+        }
+
+        function drawBall() {
+            ctx.beginPath();
+            if (!ball.gradient) {
+                ball.gradient = ctx.createRadialGradient(
+                    ball.x, ball.y, ball.radius / 2,
+                    ball.x, ball.y, ball.radius
+                );
+                ball.gradient.addColorStop(0, '#03a9f4');
+                ball.gradient.addColorStop(1, '#1e88e5');
+            }
+            ctx.fillStyle = ball.gradient;
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function drawBricks() {
+            for (let row = 0; row < brick.rows; row++) {
+                for (let col = 0; col < brick.cols; col++) {
+                    if (bricks[row][col].status === 1) {
+                        const brickX = col * (brick.width + brick.padding) + brick.offsetLeft;
+                        const brickY = row * (brick.height + brick.padding) + brick.offsetTop;
+                        bricks[row][col].x = brickX;
+                        bricks[row][col].y = brickY;
+                        ctx.fillStyle = brick.colors[row % brick.colors.length];
+                        ctx.fillRect(brickX, brickY, brick.width, brick.height);
+                        ctx.strokeStyle = '#000';
+                        ctx.strokeRect(brickX, brickY, brick.width, brick.height);
+                    }
+                }
+            }
+        }
+
+        function drawScore() {
+            ctx.font = '16px Arial';
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText('Score: ' + score, 8, 20);
+        }
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            paddle.x = mouseX - paddle.width / 2;
+            paddle.x = Math.max(0, Math.min(canvas.width - paddle.width, paddle.x));
+        });
+
+        // Update paddle position based on touch
+canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const touchX = e.touches[0].clientX - rect.left; // Get the first touch point
+    paddle.x = touchX - paddle.width / 2;
+    paddle.x = Math.max(0, Math.min(canvas.width - paddle.width, paddle.x));
+});
+
+
+        function checkCollision() {
+            if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
+                ball.dx = -ball.dx;
+            }
+            if (ball.y - ball.radius < 0) {
+                ball.dy = -ball.dy;
+            } else if (ball.y + ball.radius > canvas.height) {
+                document.location.reload();
+            }
+
+            if (
+                ball.x > paddle.x &&
+                ball.x < paddle.x + paddle.width &&
+                ball.y + ball.radius > paddle.y
+            ) {
+                ball.dy = -ball.dy;
+            }
+
+            let allBricksCleared = true;
+            for (let row = 0; row < brick.rows; row++) {
+                for (let col = 0; col < brick.cols; col++) {
+                    const b = bricks[row][col];
+                    if (b.status === 1) {
+                        allBricksCleared = false;
+                        if (
+                            ball.x > b.x &&
+                            ball.x < b.x + brick.width &&
+                            ball.y > b.y &&
+                            ball.y < b.y + brick.height
+                        ) {
+                            ball.dy = -ball.dy;
+                            b.status = 0;
+                            score++;
+                        }
+                    }
+                }
+            }
+
+            if (allBricksCleared) {
+                alert('Congratulations! You cleared all the bricks!');
+                resetGame();
+            }
+        }
+
+        function update() {
+            ball.x += ball.dx;
+            ball.y += ball.dy;
+            checkCollision();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawPaddle();
+            drawBall();
+            drawBricks();
+            drawScore();
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+    </script>
+    <strong style="text-align: center; margin-top: 20px; font-size: 14px; color: white;">
+       &copy; 2024 All rights reserved to MS Corporation
+     </strong>
+</body>
+</html>

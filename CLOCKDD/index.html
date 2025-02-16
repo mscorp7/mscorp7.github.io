@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Beautiful 3D Clock</title>
+    <style>
+      /* General Body Styling */
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(to bottom right, #0f1c2e, #203647);
+        color: #fff;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+      }
+
+      /* Container for Everything */
+      .clock-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        position: relative;
+        width: 100%;
+      }
+
+      /* Clock Face Styling */
+      .clock {
+        position: relative;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle at 50% 50%, #1b1b1b, #000);
+        border-radius: 50%;
+        box-shadow: 
+          0 0 20px rgba(255, 255, 255, 0.1),
+          inset 0 0 10px rgba(255, 255, 255, 0.2),
+          0 0 40px rgba(0, 0, 0, 0.6);
+          animation: fadeInClock 1.5s ease-in-out;
+      }
+
+      @keyframes fadeInClock {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+      /* Clock Numbers */
+      .clock span {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        font-size: 18px;
+        font-weight: bold;
+        color: #f0f0f0;
+      }
+
+      /* Positioning the Numbers */
+      .num1 { top: 13%; left: 73%; }
+      .num2 { top: 30%; left: 88%; }
+      .num3 { top: 50%; right: 3%; }
+      .num4 { top: 70%; left: 88%; }
+      .num5 { top: 87%; left: 73%; }
+      .num6 { bottom: 0%; left: 50%; }
+      .num7 { top: 86%; left: 27%; }
+      .num8 { top: 70%; left: 13%; }
+      .num9 { top: 50%; left: 5%; }
+      .num10 { top: 30%; left: 13%; }
+      .num11 { top: 14%; left: 27%; }
+      .num12 { top: 5%; left: 50%; }
+
+      /* Clock Hands */
+      .hand {
+        position: absolute;
+        bottom: 50%;
+        left: 50%;
+        background: linear-gradient(to bottom, #f5f5f5, #ffeb3b);
+        transform-origin: bottom;
+        border-radius: 5px;
+      }
+
+      .hour {
+        width: 6px;
+        height: 60px;
+        background: #fff;
+        box-shadow: 0 0 10px #ff9800;
+      }
+
+      .minute {
+        width: 4px;
+        height: 90px;
+        background: #fff;
+        box-shadow: 0 0 10px #03a9f4;
+      }
+
+      .second {
+        width: 2px;
+        height: 110px;
+        background: red;
+        box-shadow: 0 0 10px #f44336;
+      }
+
+      /* Digital Clock Styling */
+      .digital-clock {
+        margin-top: 20px;
+        font-size: 2rem;
+        font-weight: bold;
+        color: #ffeb3b;
+        text-shadow: 0px 0px 5px #ff9800, 0px 0px 10px #ff5722;
+      }
+
+      .date {
+        margin-top: 10px;
+        font-size: 1.2rem;
+        color: #fff;
+        text-shadow: 0px 0px 5px #777;
+      }
+
+      #clock-sound {
+    display: none;
+}
+
+    </style>
+  </head>
+  <body>
+    <div class="clock-container">
+      <!-- Analog Clock -->
+      <div class="clock">
+        <span class="num12">12</span>
+        <span class="num1">1</span>
+        <span class="num2">2</span>
+        <span class="num3">3</span>
+        <span class="num4">4</span>
+        <span class="num5">5</span>
+        <span class="num6">6</span>
+        <span class="num7">7</span>
+        <span class="num8">8</span>
+        <span class="num9">9</span>
+        <span class="num10">10</span>
+        <span class="num11">11</span>
+        <div class="hand hour" id="hour-hand"></div>
+        <div class="hand minute" id="minute-hand"></div>
+        <div class="hand second" id="second-hand"></div>
+      </div>
+      
+      <!-- Digital Clock -->
+      <div class="digital-clock" id="digital-time">12:00:00 AM</div>
+      <div class="date" id="date">Sunday, January 1, 2024</div>
+      <strong style="text-align: center; margin-top: 20px; font-size: 14px; color: white;">
+        &copy; 2024 All rights reserved to MS Corporation
+      </strong>
+    </div>
+    
+    <audio id="clock-sound" loop>
+       <source src="clock-ticks.wav" type="audio/wav">
+   </audio>
+
+    <script>
+      // Function to update the clock
+      function updateClock() {
+        const now = new Date();
+
+        // Analog Clock Logic
+        const hours = now.getHours() % 12;
+        const minutes = now.getMinutes();
+        const seconds = now.getSeconds();
+        const hourDeg = (hours + minutes / 60) * 30;
+        const minuteDeg = minutes * 6;
+        const secondDeg = seconds * 6;
+
+        document.getElementById("hour-hand").style.transform = `translate(-50%) rotate(${hourDeg}deg)`;
+        document.getElementById("minute-hand").style.transform = `translate(-50%) rotate(${minuteDeg}deg)`;
+        document.getElementById("second-hand").style.transform = `translate(-50%) rotate(${secondDeg}deg)`;
+
+        // Digital Clock Logic
+        const amPm = now.getHours() >= 12 ? "PM" : "AM";
+        const formattedHours = String((now.getHours() % 12) || 12).padStart(2, "0");
+        const formattedMinutes = String(minutes).padStart(2, "0");
+        const formattedSeconds = String(seconds).padStart(2, "0");
+        document.getElementById("digital-time").textContent = `${formattedHours}:${formattedMinutes}:${formattedSeconds} ${amPm}`;
+
+        // Date Logic
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const day = days[now.getDay()];
+        const date = now.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+        document.getElementById("date").textContent = `${day}, ${date}`;
+      }
+
+      // Call Update Every Second
+      setInterval(updateClock, 1000);
+      updateClock(); // Initial Call
+
+      // Play the clock sound when the user clicks anywhere on the page
+      document.body.addEventListener('click', function () {
+        const audio = document.getElementById('clock-sound');
+        audio.play();
+      });
+    </script>
+    
+  </body>
+</html>
