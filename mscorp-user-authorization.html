@@ -1,0 +1,130 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>USER Authorization ~MSCORP</title>
+  <style>
+    body {
+        background-color: rgb(0, 0, 0);
+        color: aliceblue;
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+    .container {
+        background-color: #000000;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        width: 300px;
+    }
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+    input[type="text"], input[type="password"] {
+        width: 100%;
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+    }
+    input[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+    .message {
+      font-size: 18px;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .granted {
+      color: lime;
+      font-size: 30px;
+      animation: blink 1s infinite;
+      border-radius: 1px;
+      border: 1px solid lime;
+      box-shadow: 0 0 5px 5px lime;
+    }
+    .denied {
+      color: red;
+      font-size: 30px;
+      animation: blink 1s infinite;
+      border-radius: 1px;
+      border: 1px solid red;
+      box-shadow: 0 0 5px 5px red;
+    }
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>USER Authorization</h2>
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username">
+      </div>
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password">
+      </div>
+      <input type="submit" value="Submit">
+    </form>
+    <div id="message" class="message"></div>
+  </div>
+
+  <audio id="alertSound" src="beeps-86815.mp3" preload="auto"></audio>
+  <audio id="successSound" src="success-1-6297.mp3" preload="auto"></audio>
+  <script>
+    const form = document.getElementById('loginForm');
+    const messageDiv = document.getElementById('message');
+    const alertSound = document.getElementById('alertSound');
+    const successSound = document.getElementById('successSound');
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevent form submission
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      
+      if (username === 'MS' && password === '7777') {
+        messageDiv.textContent = 'Access Granted !';
+        messageDiv.className = 'message granted';
+        successSound.play();
+        setTimeout(function(){
+            window.location.href='https://ms7777business.wixsite.com/business';
+        }, 5000);
+      } else {
+        messageDiv.textContent = 'Access Denied !';
+        messageDiv.className = 'message denied';
+        alertSound.play();
+      }
+    });
+  </script>
+</body>
+</html>

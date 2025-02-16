@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <title>MS Virtual Intelligent System ~ MSVIS AI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        #chat-container {
+            width: 90%;
+            max-width: 600px;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: linear-gradient(90deg, #000,#444,#000);
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+
+        #chat-window {
+            padding: 20px;
+            max-height: 250px;
+            overflow-y: auto;
+            flex: 1;
+            background: #fafafa;
+            transition: background 0.3s;
+        }
+
+        #chat-window.dark-mode {
+            background: #444;
+        }
+
+        #chat-output {
+            margin-bottom: 10px;
+        }
+
+        .user-message, .ai-message {
+        display: block; /* Ensure messages appear one below the other */
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 10px;
+        }
+        
+        .user-message {
+        text-align: right;
+        color: red;
+        background: #ffe6e6;
+        }
+        
+        .ai-message {
+        text-align: left;
+        color: blue;
+        background: #e6f0ff;
+        }
+
+        #user-input {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            background: #fff;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        #user-input.dark-mode {
+            background: #333;
+            border-color: #444;
+        }
+
+        textarea {
+            flex: 1;
+            resize: none;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 16px;
+            max-width: 80%;
+            min-width: 100px;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            border-color: #6200ea;
+            outline: none;
+            box-shadow: 0 0 5px rgba(98, 0, 234, 0.5);
+        }
+
+        textarea.dark-mode {
+            border-color: #666;
+            background: #555;
+            color: #fff;
+        }
+
+        button {
+            background: linear-gradient(90deg, #333,#444);
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        button:hover {
+           
+            transform: scale(1.05);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        #dark-mode-toggle {
+            position: absolute;
+            top: 10px;
+            
+            cursor: pointer;
+            background: #000;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: transform 0.3s ease;
+        }
+
+        #dark-mode-toggle.dark-mode {
+            background: #fff;
+            color: #000;
+        }
+
+        @media (max-width: 600px) {
+            #chat-container {
+                width: 100%;
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            #user-input {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            textarea {
+                max-width: 100%;
+            }
+
+            button {
+                width: 100%;
+                padding: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="chat-container">
+        <header>
+            <h4>Modern Solutions Virtual Intelligent System</h4>
+            
+        </header>
+        <div id="chat-window">
+            <div id="chat-output"></div>
+        </div>
+        <div id="user-input">
+            <textarea id="input-text" placeholder="Ask something..."></textarea>
+            <button id="send-btn"><i class="fas fa-paper-plane"></i> Send</button>
+            <button id="voice-btn"><i class="fas fa-microphone"></i></button>
+            <button id="clear-btn"><i class="fas fa-trash"></i> Clear Chat</button>
+        </div>
+    </div>
+    <button id="dark-mode-toggle">🌙</button>
+
+    <script>
+        let voices = [];
+
+    const setVoice = () => {
+        voices = window.speechSynthesis.getVoices();
+        const femaleVoice = voices.find(voice => voice.name.toLowerCase().includes('female')) || voices[0];
+        return femaleVoice;
+    };
+
+    const textToSpeech = (text) => {
+        const speech = new SpeechSynthesisUtterance(text);
+        speech.voice = setVoice();
+        window.speechSynthesis.speak(speech);
+    };
+
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+        window.speechSynthesis.onvoiceschanged = setVoice;
+    }
+
+const voiceBtn = document.getElementById("voice-btn");
+
+// Check for speech recognition API support
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition;
+
+if (SpeechRecognition) {
+recognition = new SpeechRecognition();
+recognition.continuous = false; // Stop listening after a result
+recognition.lang = 'en-US';
+recognition.interimResults = false; // Don't show partial results
+
+recognition.onstart = () => {
+console.log("Voice recognition started.");
+};
+
+recognition.onerror = (event) => {
+console.error("Speech recognition error", event.error);
+};
+
+recognition.onend = () => {
+console.log("Voice recognition ended.");
+};
+
+recognition.onresult = (event) => {
+const transcript = event.results[0][0].transcript;
+inputText.value = transcript; // Put the recognized text into the input field
+
+// Automatically handle the user message and AI response
+handleUserMessage(transcript);
+};
+
+// Start speech recognition on button click
+voiceBtn.addEventListener('click', () => {
+recognition.start();
+});
+} else {
+console.error("Speech Recognition API is not supported in this browser.");
+}
+    const questionsAndAnswers = [
+        { keywords: ["who is Mahavirsinh Sodha", "Mahavirsinh Sodha", "Mahavir", "Mahaveer", "Mahavir Singh"], answer: "Mahavirsinh Sodha is the founder of MS Corporation, specializing in innovative modern solutions." },
+        { keywords: ["MS Corporation", "MS Corp", "MS"], answer: "MS Corporation is a company that crafts bespoke modern solutions to redefine online experiences and drive business success." },
+        { keywords: ["what is AI", "AI"], answer: "AI, or Artificial Intelligence, is the simulation of human intelligence in machines programmed to think and learn." },
+        { keywords: ["how are you", "how are you doing", "how's it going", "what's up"], answer: "I'm doing great, thanks for asking! How about you?" },
+        { keywords: ["hello", "hi", "hey"], answer: "Hello! How can I assist you today?" },
+        { keywords: ["good morning", "morning"], answer: "Good morning! I hope you have a wonderful day ahead." },
+        { keywords: ["good night", "night"], answer: "Good night! Sleep well and have sweet dreams." },
+        { keywords: ["what's your name", "who are you"], answer: "I am MSVIS AI, your virtual assistant, here to help with anything you need!" },
+        { keywords: ["thank you", "thanks"], answer: "You're welcome! Let me know if you need anything else." },
+        { keywords: ["what time is it", "current time", "time"], answer: `The current time is ${new Date().toLocaleTimeString()}.` },
+        { keywords: ["how old are you", "what is your age"], answer: "I don't have an age as I'm an AI, but I'm always learning and growing!" },
+        { keywords: ["tell me a joke", "make me laugh", "joke"], answer: "Why don't skeletons fight each other? They don't have the guts!" },
+        { keywords: ["what is your favorite color", "favorite color"], answer: "I think I'd like blue—it's calm and serene, just like the sky!" },
+        { keywords: ["tell me a fact", "interesting fact"], answer: "Did you know? Honey never spoils. Archaeologists have found pots of honey in ancient tombs that are over 3,000 years old and still edible!" },
+        { keywords: ["how's the weather", "weather today", "what's the weather like"], answer: "I don't have live weather updates, but you can check your local forecast online or via a weather app!" },
+        { keywords: ["what's your favorite food", "favorite food"], answer: "As an AI, I don't eat, but I think pizza is universally loved!" },
+        { keywords: ["what do you do", "what can you do", "what's your purpose"], answer: "I assist with answering questions, providing information, and helping you with various tasks!" },
+        { keywords: ["can you sing", "sing a song"], answer: "I can't sing, but I can provide lyrics or help find your favorite songs!" },
+        { keywords: ["who is the president", "who is the president of the US", "current president"], answer: "As of now, the President of the United States is Joe Biden. Let me know if you need more details!" },
+        { keywords: ["how do you feel", "do you have feelings"], answer: "I don't have feelings like humans do, but I am here to assist you with anything you need!" },
+        { keywords: ["what is the meaning of life", "life meaning", "why are we here"], answer: "The meaning of life is a philosophical question that varies from person to person. Some say it's about happiness, others about love and relationships!" },
+        { keywords: ["how can I be productive", "tips for productivity", "how to be productive"], answer: "Try breaking your tasks into smaller, manageable chunks, and don't forget to take regular breaks to stay refreshed!" },
+        { keywords: ["do you believe in aliens", "aliens", "are there aliens"], answer: "I don't have personal beliefs, but many scientists think it's possible there are other life forms in the universe!" },
+    ];
+
+    const chatWindow = document.getElementById("chat-window");
+    const chatOutput = document.getElementById("chat-output");
+    const inputText = document.getElementById("input-text");
+    const sendBtn = document.getElementById("send-btn");
+    const darkModeToggle = document.getElementById("dark-mode-toggle");
+   
+
+    // Handle user input and AI response
+    const handleUserMessage = (message) => {
+        const userMessage = document.createElement("div");
+        userMessage.classList.add("user-message");
+        userMessage.textContent = message;
+        chatOutput.appendChild(userMessage);
+        chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to the bottom
+
+        // Find matching response for the input
+        const response = questionsAndAnswers.find(item =>
+            item.keywords.some(keyword => message.toLowerCase().includes(keyword.toLowerCase()))
+        );
+
+        const aiMessage = document.createElement("div");
+        aiMessage.classList.add("ai-message");
+        aiMessage.textContent = response ? response.answer : "Sorry, I didn't understand that.";
+        chatOutput.appendChild(aiMessage);
+        textToSpeech(aiMessage.textContent); // Speak AI response
+        chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to the bottom
+    };
+
+    sendBtn.addEventListener("click", () => {
+        const userMessage = inputText.value.trim();
+        if (userMessage) {
+            handleUserMessage(userMessage);
+        }
+        inputText.value = ""; // Clear input field
+    });
+
+const clearBtn = document.getElementById("clear-btn");
+
+clearBtn.addEventListener("click", () => {
+// Clear the chat output by setting the inner HTML to an empty string
+chatOutput.innerHTML = "";
+inputText.value = ""; // Clear the input field as well
+});
+    // Dark mode toggle functionality
+    darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        document.getElementById('chat-window').classList.toggle('dark-mode', isDarkMode);
+        document.getElementById('user-input').classList.toggle('dark-mode', isDarkMode);
+        document.getElementById('dark-mode-toggle').classList.toggle('dark-mode', isDarkMode);
+
+        document.body.style.backgroundColor = isDarkMode ? '#121212' : '#f4f4f4';
+        const footer = document.querySelector('footer');
+        footer.classList.toggle('dark-mode', isDarkMode);
+        footer.style.color=isDarkMode ? 'white' : 'black';
+        darkModeToggle.innerHTML = isDarkMode ? '🌞' : '🌙'; // Toggle emoji
+    });
+
+    
+    </script>
+
+    <footer style="text-align: center; padding: 10px; color: BLACK; margin-top: 20px; font-size:11px; ">
+    
+        <strong>&copy; 2025 MSVIS By MS Corporation. All rights reserved.</strong>
+    </footer>
+</body>
+
+</html>

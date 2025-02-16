@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & PasswordCheck</title>
+    <style>
+        /* Shared styles */
+        body {
+            display: grid;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #a800ff;
+            font-family: Times, serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+        }
+        .box, .login {
+            background: #dedede;
+            padding: 50px;
+            border-radius: 10px;
+        }
+        .inputBox input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid black;
+            font-weight: 900;
+        }
+        #btn {
+            color: #fff;
+            background-color: #b12bff;
+            font-weight: 900;
+            font-size: 20px;
+            border: none;
+            padding: 10px;
+        }
+        .validation ul li {
+            list-style: none;
+            font-size: 16px;
+            color: rgb(255, 72, 72);
+        }
+        .validation ul li.valid {
+            color: rgb(40, 194, 1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sign In Form -->
+        <div class="login">
+            <h2>Login Now!</h2>
+            <div class="inputBox">
+                <input type="text" placeholder="Username/Email-ID/Phone" id="input1" required>
+            </div>
+            <div class="inputBox">
+                <input type="password" placeholder="Type-Password" id="input2" required>
+            </div>
+            <button id="show1" onclick="togglePasswordVisibility()">Show</button>
+            <div class="inputBox">
+                <input type="submit" value="Login" onclick="validateLogin()" id="btn">
+            </div>
+        </div>
+
+        <!-- Sign Up Form -->
+        <div class="box">
+            <div class="inputBox">
+                <input type="password" id="pswrd" placeholder="Password" onkeyup="checkPassword(this.value)">
+            </div>
+            <div class="validation">
+                <ul>
+                    <li id="lower">Lowercase</li>
+                    <li id="upper">Uppercase</li>
+                    <li id="number">Number</li>
+                    <li id="special">Special</li>
+                    <li id="length">Minimum 7 characters</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Password validation for Sign Up
+        function checkPassword(data) {
+            const lower = /[a-z]/;
+            const upper = /[A-Z]/;
+            const number = /[0-9]/;
+            const special = /[!@#\$%\^&\*?_]/;
+            const minLength = /.{7,}/;
+
+            document.getElementById('lower').classList.toggle('valid', lower.test(data));
+            document.getElementById('upper').classList.toggle('valid', upper.test(data));
+            document.getElementById('number').classList.toggle('valid', number.test(data));
+            document.getElementById('special').classList.toggle('valid', special.test(data));
+            document.getElementById('length').classList.toggle('valid', minLength.test(data));
+        }
+
+        // Show/Hide password for Sign In
+        function togglePasswordVisibility() {
+            var passwordField = document.getElementById('input2');
+            var toggleBtn = document.getElementById('show1');
+
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleBtn.textContent = 'Hide';
+            } else {
+                passwordField.type = 'password';
+                toggleBtn.textContent = 'Show';
+            }
+        }
+
+        // Validate login credentials
+        function validateLogin() {
+            var username = document.getElementById("input1").value;
+            var password = document.getElementById("input2").value;
+
+            if (username === "MS" && password === "7777") {
+                alert("Login Successful");
+                // location.href = "MS Webpage.html";
+            } else {
+                alert("Login Failed");
+            }
+        }
+    </script>
+    <div style="text-align: center; margin-top: 20px; font-size: 14px; color: white;">
+  &copy; 2022 All rights reserved to MS Corporation
+</div>
+
+</body>
+</html>

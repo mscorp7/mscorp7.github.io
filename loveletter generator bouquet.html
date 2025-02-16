@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MS's SPECIAL~~~</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #00aaff, #f10081);
+            color: #333;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #e63946;
+        }
+
+        #loveLetter {
+            margin-bottom: 30px;
+        }
+
+        input[type="text"], textarea {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            border-color: #e63946;
+            outline: none;
+        }
+
+        textarea {
+            height: 100px;
+            resize: none;
+        }
+
+        button {
+            background: linear-gradient(to right, #a8dadc, #f1faee);
+            color: #1d3557;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            font-size: 16px;
+            margin: 5px;
+        }
+
+        button:hover {
+            background: linear-gradient(to right, #f1faee, #a8dadc);
+            transform: scale(1.05);
+        }
+
+        #bouquetDisplay {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .flower {
+            margin: 5px;
+            font-size: 50px;
+        }
+
+        #finalLetter {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: #e0fbfc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #download {
+            display: none; /* Hidden until the letter is generated */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="font-style: italic;"><u>Craft Your Love Letter</u></h1>
+        <div id="loveLetter">
+            <input type="text" id="greeting" placeholder="Dear [Name]..." />
+            <textarea id="body" placeholder="Write your love letter here..."></textarea>
+            <input type="text" id="closing" placeholder="With all my love..." />
+            <button id="generateLetter">Generate Letter</button>
+        </div>
+        <div id="bouquetSection">
+            <h2>Customize Your Bouquet</h2>
+            <div id="flowerOptions">
+                <button onclick="addFlower('rose')">🌹 Rose</button>
+                <button onclick="addFlower('lily')">🌸 Lily</button>
+                <button onclick="addFlower('tulip')">🌷 Tulip</button>
+                <button onclick="addFlower('sunflower')">🌻 Sunflower</button>
+                <button onclick="addFlower('daisy')">🌼 Daisy</button>
+                <button onclick="addFlower('cherry')">🌸🌼 Cherry Blossom</button>
+                <button onclick="addFlower('carnation')">🌺 Carnation</button>
+                <button onclick="addFlower('orchid')">🌸 Orchid</button>
+            </div>
+            <div id="bouquetDisplay"></div>
+            <button id="download" onclick="downloadLetter()">Download Letter</button>
+        </div>
+        <div id="finalLetter" class="hidden"></div>
+    </div>
+
+    <script>
+        let bouquet = [];
+
+        function addFlower(flowerType) {
+            const bouquetDisplay = document.getElementById("bouquetDisplay");
+            const flower = document.createElement("span");
+            flower.classList.add("flower");
+            flower.innerText = flowerType === 'rose' ? '🌹' : 
+                                flowerType === 'lily' ? '🌸' : 
+                                flowerType === 'tulip' ? '🌷' : 
+                                flowerType === 'sunflower' ? '🌻' : 
+                                flowerType === 'daisy' ? '🌼' :
+                                flowerType === 'cherry' ? '🌸🌼' :
+                                flowerType === 'carnation' ? '🌺' : '🌸';
+            bouquetDisplay.appendChild(flower);
+            bouquet.push(flower.innerText); // Store flower in the bouquet array
+        }
+
+        document.getElementById("generateLetter").onclick = function() {
+            const greeting = document.getElementById("greeting").value;
+            const body = document.getElementById("body").value;
+            const closing = document.getElementById("closing").value;
+
+            const finalLetter = `
+                <h2>${greeting}</h2>
+                <p>${body}</p>
+                <p>${closing}</p>
+                <h3>Your Bouquet:</h3>
+                <p>${bouquet.join(' ')}</p> <!-- Show bouquet in the letter -->
+            `;
+
+            const finalLetterDiv = document.getElementById("finalLetter");
+            finalLetterDiv.innerHTML = finalLetter;
+            finalLetterDiv.style.display = 'block';
+            finalLetterDiv.classList.remove("hidden");
+            document.getElementById("download").style.display = 'block'; // Show download button
+        };
+
+        function downloadLetter() {
+            const finalLetter = document.getElementById("finalLetter").innerHTML;
+            const blob = new Blob([finalLetter], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'love_letter.html';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+    <p style="text-align: center;color:aliceblue"> All rights Reserved to Mahavirsinh Sodha's ~ MS Corporation 2K24</p>
+</body>
+</html>
