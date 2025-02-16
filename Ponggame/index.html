@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anime-Style AI Pong Game</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #3f2b96, #a8c0ff);
+      font-family: 'Trebuchet MS', sans-serif;
+    }
+
+    canvas {
+      background: linear-gradient(145deg, #111, #333);
+      border: 4px solid #fff;
+      border-radius: 10px;
+      box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.8);
+      max-width: 100%;
+      height: auto;
+    }
+
+    #anime-overlay {
+      position: absolute;
+      top: 10px;
+      text-align: center;
+      width: 100%;
+      color: rgb(242, 255, 0);
+      font-size: 16px;
+    }
+
+    @keyframes glow {
+      0% {
+        box-shadow: 0 0 10px #ff0;
+      }
+      50% {
+        box-shadow: 0 0 20px #f06;
+      }
+      100% {
+        box-shadow: 0 0 10px #ff0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="anime-overlay">
+    <p><strong>🏓Use your finger or mouse to move the paddle!</strong></p>
+    <strong style="text-align: center; margin-top: 20px; font-size: 14px; color: white;">
+      &copy; 2024 All rights reserved to MS Corporation
+    </strong>
+  </div>
+  <canvas id="gameCanvas">
+  </canvas>
+  
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Responsive canvas size
+    canvas.width = window.innerWidth < 800 ? window.innerWidth - 20 : 800;
+    canvas.height = canvas.width * (3 / 4);
+
+    // Game Variables
+    const paddleWidth = 15, paddleHeight = canvas.height / 5, ballSize = 10;
+    const player = { x: 0, y: (canvas.height - paddleHeight) / 2, score: 0 };
+    const ai = { x: canvas.width - paddleWidth, y: (canvas.height - paddleHeight) / 2, score: 0 };
+    const ball = { x: canvas.width / 2, y: canvas.height / 2, dx: 4, dy: 4, trail: [] };
+
+    const maxTrailLength = 10;
+
+    // Anime glow effect for ball trail
+    function drawTrail() {
+      for (let i = 0; i < ball.trail.length; i++) {
+        const trailOpacity = (i + 1) / maxTrailLength;
+        ctx.beginPath();
+        ctx.arc(ball.trail[i].x, ball.trail[i].y, ballSize / 2, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 0, 200, ${trailOpacity})`;
+        ctx.fill();
+        ctx.closePath();
+      }
+    }
+
+    // Draw paddles and ball
+    function drawPaddle(paddle, color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(paddle.x, paddle.y, paddleWidth, paddleHeight);
+    }
+
+    function drawBall() {
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, ballSize / 2, 0, Math.PI * 2);
+      ctx.fillStyle = '#f0f';
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    function drawScore() {
+      ctx.font = `${canvas.width / 20}px Arial`;
+      ctx.fillStyle = '#fff';
+      ctx.fillText(`Player: ${player.score}`, 20, 30);
+      ctx.fillText(`AI: ${ai.score}`, canvas.width - 150, 30);
+    }
+
+    // Move player paddle (mouse/touch support)
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      player.y = e.clientY - rect.top - paddleHeight / 2;
+      clampPaddle(player);
+    });
+
+    canvas.addEventListener('touchmove', (e) => {
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      player.y = touch.clientY - rect.top - paddleHeight / 2;
+      clampPaddle(player);
+    });
+
+    // Clamp paddle position within canvas
+    function clampPaddle(paddle) {
+      if (paddle.y < 0) paddle.y = 0;
+      if (paddle.y > canvas.height - paddleHeight) paddle.y = canvas.height - paddleHeight;
+    }
+
+    // Move AI paddle
+    function moveAI() {
+      const aiSpeed = 3;
+      if (ball.y < ai.y + paddleHeight / 2) ai.y -= aiSpeed;
+      else if (ball.y > ai.y + paddleHeight / 2) ai.y += aiSpeed;
+
+      clampPaddle(ai);
+    }
+
+    // Ball movement with trail
+    function moveBall() {
+      ball.x += ball.dx;
+      ball.y += ball.dy;
+
+      ball.trail.unshift({ x: ball.x, y: ball.y });
+      if (ball.trail.length > maxTrailLength) {
+        ball.trail.pop();
+      }
+
+      // Bounce off top and bottom
+      if (ball.y - ballSize / 2 < 0 || ball.y + ballSize / 2 > canvas.height) ball.dy *= -1;
+
+      // Bounce off paddles
+      if (ball.x - ballSize / 2 < player.x + paddleWidth &&
+          ball.y > player.y &&
+          ball.y < player.y + paddleHeight) {
+        ball.dx *= -1.1; // Slight speed increase
+        ball.x = player.x + paddleWidth + ballSize / 2; // Avoid sticking
+      }
+
+      if (ball.x + ballSize / 2 > ai.x &&
+          ball.y > ai.y &&
+          ball.y < ai.y + paddleHeight) {
+        ball.dx *= -1.1; // Slight speed increase
+        ball.x = ai.x - ballSize / 2; // Avoid sticking
+      }
+
+      // Reset ball and update score
+      if (ball.x - ballSize / 2 < 0) {
+        ai.score++;
+        resetBall();
+      }
+
+      if (ball.x + ballSize / 2 > canvas.width) {
+        player.score++;
+        resetBall();
+      }
+    }
+
+    // Reset ball to center
+    function resetBall() {
+      ball.x = canvas.width / 2;
+      ball.y = canvas.height / 2;
+      ball.dx = (Math.random() > 0.5 ? 4 : -4);
+      ball.dy = (Math.random() > 0.5 ? 4 : -4);
+      ball.trail = [];
+    }
+
+    // Update canvas
+    function update() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawTrail();
+      drawPaddle(player, '#0f0');
+      drawPaddle(ai, '#f00');
+      drawBall();
+      drawScore();
+      moveAI();
+      moveBall();
+    }
+
+    // Game loop
+    function gameLoop() {
+      update();
+      requestAnimationFrame(gameLoop);
+    }
+
+    // Start game
+    gameLoop();
+  </script>
+   
+</body>
+</html>
