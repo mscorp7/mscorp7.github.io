@@ -151,7 +151,21 @@
             background: #fff;
             color: #000;
         }
+        .bot-message {
+    background-color: #dfe7fd;
+    color: blue;
+    text-align: left;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 5px;
+    display: inline-block;
+    max-width: 80%;
+}
 
+.sender-name {
+    font-weight: bold;
+    margin-right: 5px;
+}
         @media (max-width: 600px) {
             #chat-container {
                 width: 100%;
@@ -196,23 +210,87 @@
     <button id="dark-mode-toggle">🌙</button>
 
     <script>
-        let voices = [];
+       
+       const questionsAndAnswers = [
+        { keywords: ["who is Mahavirsinh Sodha", "Mahavirsinh Sodha", "Mahavir", "Mahaveer", "Mahavir Singh"], answer: "Mahavirsinh Sodha is the founder of MS Corporation, specializing in innovative modern solutions." },
+        { keywords: ["MS Corporation", "MS Corp", "MS"], answer: "MS Corporation is a company that crafts bespoke modern solutions to redefine online experiences and drive business success." },
+        { keywords: ["what is AI", "AI"], answer: "AI, or Artificial Intelligence, is the simulation of human intelligence in machines programmed to think and learn." },
+        { keywords: ["how are you", "how are you doing", "how's it going", "what's up"], answer: "I'm doing great, thanks for asking! How about you?" },
+        { keywords: ["hello", "hi", "hey"], answer: "Hello! How can I assist you today?" },
+        { keywords: ["good morning", "morning"], answer: "Good morning! I hope you have a wonderful day ahead." },
+        { keywords: ["good night", "night"], answer: "Good night! Sleep well and have sweet dreams." },
+        { keywords: ["what's your name", "who are you"], answer: "I am MSVIS AI, your virtual assistant, here to help with anything you need!" },
+        { keywords: ["thank you", "thanks"], answer: "You're welcome! Let me know if you need anything else." },
+        { keywords: ["what time is it", "current time", "time"], answer: `The current time is ${new Date().toLocaleTimeString()}.` },
+        { keywords: ["how old are you", "what is your age"], answer: "I don't have an age as I'm an AI, but I'm always learning and growing!" },
+        { keywords: ["tell me a joke", "make me laugh", "joke"], answer: "Why don't skeletons fight each other? They don't have the guts!" },
+        { keywords: ["what is your favorite color", "favorite color"], answer: "I think I'd like blue—it's calm and serene, just like the sky!" },
+        { keywords: ["tell me a fact", "interesting fact"], answer: "Did you know? Honey never spoils. Archaeologists have found pots of honey in ancient tombs that are over 3,000 years old and still edible!" },
+        { keywords: ["how's the weather", "weather today", "what's the weather like"], answer: "I don't have live weather updates, but you can check your local forecast online or via a weather app!" },
+        { keywords: ["what's your favorite food", "favorite food"], answer: "As an AI, I don't eat, but I think pizza is universally loved!" },
+        { keywords: ["what do you do", "what can you do", "what's your purpose"], answer: "I assist with answering questions, providing information, and helping you with various tasks!" },
+        { keywords: ["can you sing", "sing a song"], answer: "I can't sing, but I can provide lyrics or help find your favorite songs!" },
+        { keywords: ["who is the president", "who is the president of the US", "current president"], answer: "As of now, the President of the United States is Joe Biden. Let me know if you need more details!" },
+        { keywords: ["how do you feel", "do you have feelings"], answer: "I don't have feelings like humans do, but I am here to assist you with anything you need!" },
+        { keywords: ["what is the meaning of life", "life meaning", "why are we here"], answer: "The meaning of life is a philosophical question that varies from person to person. Some say it's about happiness, others about love and relationships!" },
+        { keywords: ["how can I be productive", "tips for productivity", "how to be productive"], answer: "Try breaking your tasks into smaller, manageable chunks, and don't forget to take regular breaks to stay refreshed!" },
+        { keywords: ["do you believe in aliens", "aliens", "are there aliens"], answer: "I don't have personal beliefs, but many scientists think it's possible there are other life forms in the universe!" },
+    ];
 
-    const setVoice = () => {
-        voices = window.speechSynthesis.getVoices();
-        const femaleVoice = voices.find(voice => voice.name.toLowerCase().includes('female')) || voices[0];
-        return femaleVoice;
-    };
 
-    const textToSpeech = (text) => {
-        const speech = new SpeechSynthesisUtterance(text);
-        speech.voice = setVoice();
-        window.speechSynthesis.speak(speech);
-    };
+       let voices = [];
 
-    if (window.speechSynthesis.onvoiceschanged !== undefined) {
-        window.speechSynthesis.onvoiceschanged = setVoice;
+const loadVoices = () => {
+    voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+        console.log("Voices loaded:", voices.map(v => v.name)); // Debugging
+    } else {
+        setTimeout(loadVoices, 100); // Retry loading voices
     }
+};
+
+const setVoice = () => {
+    voices = window.speechSynthesis.getVoices();
+    
+    // List of common female voices
+    const femaleVoiceNames = [
+        "Google UK English Female",
+        "Google US English",
+        "Microsoft Zira - English (United States)",
+        "Victoria",
+        "Samantha" // Common female voice in macOS/iOS
+    ];
+
+    // Try to find a preferred female voice
+    let selectedVoice = voices.find(voice => femaleVoiceNames.includes(voice.name));
+
+    return selectedVoice || voices[0]; // Fallback to the first available voice
+};
+
+
+
+const textToSpeech = (text) => {
+    if (!text) return; // Avoid empty speech
+
+    const speech = new SpeechSynthesisUtterance(text);
+    
+    setTimeout(() => { // Ensure voices are loaded before speaking
+        speech.voice = setVoice();
+        if (!speech.voice) {
+            console.error("No voice available!");
+            return;
+        }
+        console.log("Speaking with voice:", speech.voice.name); // Debugging
+        window.speechSynthesis.speak(speech);
+    }, 200);
+};
+
+// Ensure voices are loaded
+window.speechSynthesis.onvoiceschanged = () => {
+    voices = window.speechSynthesis.getVoices();
+    console.log("Available voices:", voices.map(v => v.name)); // Debugging
+};
+
 
 const voiceBtn = document.getElementById("voice-btn");
 
@@ -243,7 +321,7 @@ const transcript = event.results[0][0].transcript;
 inputText.value = transcript; // Put the recognized text into the input field
 
 // Automatically handle the user message and AI response
-handleUserMessage(transcript);
+sendMessage(transcript);
 };
 
 // Start speech recognition on button click
@@ -253,32 +331,7 @@ recognition.start();
 } else {
 console.error("Speech Recognition API is not supported in this browser.");
 }
-    const questionsAndAnswers = [
-        { keywords: ["who is Mahavirsinh Sodha", "Mahavirsinh Sodha", "Mahavir", "Mahaveer", "Mahavir Singh"], answer: "Mahavirsinh Sodha is the founder of MS Corporation, specializing in innovative modern solutions." },
-        { keywords: ["MS Corporation", "MS Corp", "MS"], answer: "MS Corporation is a company that crafts bespoke modern solutions to redefine online experiences and drive business success." },
-        { keywords: ["what is AI", "AI"], answer: "AI, or Artificial Intelligence, is the simulation of human intelligence in machines programmed to think and learn." },
-        { keywords: ["how are you", "how are you doing", "how's it going", "what's up"], answer: "I'm doing great, thanks for asking! How about you?" },
-        { keywords: ["hello", "hi", "hey"], answer: "Hello! How can I assist you today?" },
-        { keywords: ["good morning", "morning"], answer: "Good morning! I hope you have a wonderful day ahead." },
-        { keywords: ["good night", "night"], answer: "Good night! Sleep well and have sweet dreams." },
-        { keywords: ["what's your name", "who are you"], answer: "I am MSVIS AI, your virtual assistant, here to help with anything you need!" },
-        { keywords: ["thank you", "thanks"], answer: "You're welcome! Let me know if you need anything else." },
-        { keywords: ["what time is it", "current time", "time"], answer: `The current time is ${new Date().toLocaleTimeString()}.` },
-        { keywords: ["how old are you", "what is your age"], answer: "I don't have an age as I'm an AI, but I'm always learning and growing!" },
-        { keywords: ["tell me a joke", "make me laugh", "joke"], answer: "Why don't skeletons fight each other? They don't have the guts!" },
-        { keywords: ["what is your favorite color", "favorite color"], answer: "I think I'd like blue—it's calm and serene, just like the sky!" },
-        { keywords: ["tell me a fact", "interesting fact"], answer: "Did you know? Honey never spoils. Archaeologists have found pots of honey in ancient tombs that are over 3,000 years old and still edible!" },
-        { keywords: ["how's the weather", "weather today", "what's the weather like"], answer: "I don't have live weather updates, but you can check your local forecast online or via a weather app!" },
-        { keywords: ["what's your favorite food", "favorite food"], answer: "As an AI, I don't eat, but I think pizza is universally loved!" },
-        { keywords: ["what do you do", "what can you do", "what's your purpose"], answer: "I assist with answering questions, providing information, and helping you with various tasks!" },
-        { keywords: ["can you sing", "sing a song"], answer: "I can't sing, but I can provide lyrics or help find your favorite songs!" },
-        { keywords: ["who is the president", "who is the president of the US", "current president"], answer: "As of now, the President of the United States is Joe Biden. Let me know if you need more details!" },
-        { keywords: ["how do you feel", "do you have feelings"], answer: "I don't have feelings like humans do, but I am here to assist you with anything you need!" },
-        { keywords: ["what is the meaning of life", "life meaning", "why are we here"], answer: "The meaning of life is a philosophical question that varies from person to person. Some say it's about happiness, others about love and relationships!" },
-        { keywords: ["how can I be productive", "tips for productivity", "how to be productive"], answer: "Try breaking your tasks into smaller, manageable chunks, and don't forget to take regular breaks to stay refreshed!" },
-        { keywords: ["do you believe in aliens", "aliens", "are there aliens"], answer: "I don't have personal beliefs, but many scientists think it's possible there are other life forms in the universe!" },
-    ];
-
+  
     const chatWindow = document.getElementById("chat-window");
     const chatOutput = document.getElementById("chat-output");
     const inputText = document.getElementById("input-text");
@@ -287,30 +340,81 @@ console.error("Speech Recognition API is not supported in this browser.");
    
 
     // Handle user input and AI response
-    const handleUserMessage = (message) => {
-        const userMessage = document.createElement("div");
-        userMessage.classList.add("user-message");
-        userMessage.textContent = message;
-        chatOutput.appendChild(userMessage);
-        chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to the bottom
+    async function sendMessage() {
+        
+    let message = document.getElementById("input-text").value.trim();
+    if (!message) return;
 
-        // Find matching response for the input
-        const response = questionsAndAnswers.find(item =>
-            item.keywords.some(keyword => message.toLowerCase().includes(keyword.toLowerCase()))
-        );
+    document.getElementById("input-text").value = ""; // Clear input after sending
+    appendMessage("", message, "user-message");
 
-        const aiMessage = document.createElement("div");
-        aiMessage.classList.add("ai-message");
-        aiMessage.textContent = response ? response.answer : "Sorry, I didn't understand that.";
-        chatOutput.appendChild(aiMessage);
-        textToSpeech(aiMessage.textContent); // Speak AI response
-        chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to the bottom
-    };
+    let matchedAnswer = null;
+    for (let qa of questionsAndAnswers) {
+        if (qa.keywords.some(keyword => message.toLowerCase().includes(keyword.toLowerCase()))) {
+            matchedAnswer = qa.answer;
+            break;
+        }
+    }
+
+    if (matchedAnswer) {
+        appendMessage("", matchedAnswer, "bot-message");
+        return;
+    }
+
+    try {
+        let response = await fetch("http://localhost:3000/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message }),
+        });
+
+        if (!response.ok) throw new Error("Server error");
+
+        let data = await response.json();
+        appendMessage("",data.content,"bot-message");
+    } catch (error) {
+        appendMessage("MSVIS", "Error fetching response.", "bot-message");
+        console.error(error);
+    }
+}
+
+
+// Function to append messages to chat UI
+function appendMessage(sender, message, className) {
+    const chatOutput = document.getElementById("chat-output");
+
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add(className);
+    
+    // Create a span for the sender name (optional)
+    const senderSpan = document.createElement("span");
+    senderSpan.classList.add("sender-name");
+    senderSpan.textContent = sender;
+
+    // Create a span for the message content
+    const messageSpan = document.createElement("span");
+    messageSpan.classList.add("message-content");
+    messageSpan.textContent = message;
+
+    // Append elements
+    messageDiv.appendChild(senderSpan);
+    messageDiv.appendChild(messageSpan);
+    chatOutput.appendChild(messageDiv);
+
+    // Auto-scroll to bottom
+    chatOutput.scrollTop = chatOutput.scrollHeight;
+
+    if (className === "bot-message") {
+        textToSpeech(message); // Speak the bot's message
+        }
+}
+loadVoices();
+
 
     sendBtn.addEventListener("click", () => {
         const userMessage = inputText.value.trim();
         if (userMessage) {
-            handleUserMessage(userMessage);
+            sendMessage(userMessage);
         }
         inputText.value = ""; // Clear input field
     });
@@ -319,6 +423,7 @@ const clearBtn = document.getElementById("clear-btn");
 
 clearBtn.addEventListener("click", () => {
 // Clear the chat output by setting the inner HTML to an empty string
+window.speechSynthesis.cancel();
 chatOutput.innerHTML = "";
 inputText.value = ""; // Clear the input field as well
 });
