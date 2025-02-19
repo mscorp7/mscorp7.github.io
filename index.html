@@ -1273,8 +1273,7 @@ popup.style.display = 'none';
        if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('https://mscorp7.github.io/msweb/service-worker.js')
-            .then(() => console.log("SW Registered!"))
-            .catch(err => console.error("SW Registration Failed:", err));
+            .catch(() => {}); // Silently handle errors
     });
 }
     </script>
