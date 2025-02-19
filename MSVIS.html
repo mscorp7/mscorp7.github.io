@@ -331,7 +331,7 @@ console.error("Speech Recognition API is not supported in this browser.");
 
     let matchedAnswer = null;
     for (let qa of questionsAndAnswers) {
-        if (qa.keywords.some(keyword => message.toLowerCase().includes(keyword.toLowerCase()))) {
+        if (qa.keywords.some(keyword => new RegExp(`\\b${keyword}\\b`, "i").test(message))) {
             matchedAnswer = qa.answer;
             break;
         }
