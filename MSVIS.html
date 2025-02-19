@@ -214,7 +214,7 @@
        const questionsAndAnswers = [
         { keywords: ["who is Mahavirsinh Sodha", "Mahavirsinh Sodha", "Mahavir", "Mahaveer", "Mahavir Singh"], answer: "Mahavirsinh Sodha is the founder of MS Corporation, specializing in innovative modern solutions." },
         { keywords: ["MS Corporation", "MS Corp", "MS"], answer: "MS Corporation is a company that crafts bespoke modern solutions to redefine online experiences and drive business success." },
-        { keywords: ["what's your name", "who are you"], answer: "I am MSVIS AI, your virtual assistant, here to help with anything you need!" },
+        { keywords: ["hi", "hello", "what's your name", "who are you"], answer: "I am MSVIS AI, your virtual assistant, here to help with anything you need!" },
         { keywords: ["what time is it", "current time", "time"], answer: `The current time is ${new Date().toLocaleTimeString()}.` }
         ];
 
@@ -343,7 +343,7 @@ console.error("Speech Recognition API is not supported in this browser.");
     }
 
     try {
-        let response = await fetch("https://msvis.onrender.com/api/chat", {
+        let response = await fetch("https://msvis.onrender.com/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ message }),
