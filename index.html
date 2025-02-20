@@ -1276,6 +1276,10 @@ popup.style.display = 'none';
             .catch(() => {}); // Silently handle errors
     });
 }
+document.addEventListener('contextmenu', event => {
+  alert("Right-click is disabled for content protection. ~ MS CORP.");
+  event.preventDefault();
+});
 
     </script>
 </body>
