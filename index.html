@@ -1242,7 +1242,8 @@ cursor: pointer;
 
     </section>
 
-    <footer><a href="LICENSE.txt" target="_blank" style="color: white; text-decoration: none;">
+    <footer><a href="LICENSE.txt" target="_blank" style="color: white; text-decoration: none;" onmouseover="this.style.color='gray'" 
+       onmouseout="this.style.color='white'">
         <p style="font-family:Times;font-size:15px;">Copyright &copy; 2017-2025 MS Corporation<br> All rights reserved.</p></a>
     </footer>
     <script>
@@ -1276,8 +1277,6 @@ popup.style.display = 'none';
             .catch(() => {}); // Silently handle errors
     });
 }
-
-  document.addEventListener('contextmenu', event => event.preventDefault());
 
     </script>
 
