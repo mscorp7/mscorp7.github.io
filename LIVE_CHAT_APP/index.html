@@ -15,7 +15,7 @@
         </div>
     </div>
     <h6>&copy; 2K24 MS CORP. ALL RIGHTS RESERVED</h6>
-    <input type="range" id="bgChanger" min="0" max="9" step="1" value="0" style="width: 100%; margin-top: 10px;">
+    <input type="range" id="bgChanger" min="0" max="29" step="1" value="0" style="width: 100%; margin-top: 10px;">
 
 <script>
     const gradients = [
@@ -28,13 +28,34 @@
         "linear-gradient(135deg, teal, crimson)",
         "linear-gradient(135deg, black, gray)",
         "linear-gradient(135deg, indigo, white)",
-        "linear-gradient(135deg, lime, turquoise)"
+        "linear-gradient(135deg, lime, turquoise)",
+        "linear-gradient(135deg, magenta, royalblue)",
+        "linear-gradient(135deg, firebrick, darkorange)",
+        "linear-gradient(135deg, orchid, deeppink)",
+        "linear-gradient(135deg, darkgreen, lightgreen)",
+        "linear-gradient(135deg, midnightblue, dodgerblue)",
+        "linear-gradient(135deg, sienna, wheat)",
+        "linear-gradient(135deg, steelblue, lavender)",
+        "linear-gradient(135deg, maroon, goldenrod)",
+        "linear-gradient(135deg, darkslategray, lightgray)",
+        "linear-gradient(135deg, darkcyan, aquamarine)",
+        "linear-gradient(135deg, tomato, palegoldenrod)",
+        "linear-gradient(135deg, plum, hotpink)",
+        "linear-gradient(135deg, rebeccapurple, salmon)",
+        "linear-gradient(135deg, darkblue, skyblue)",
+        "linear-gradient(135deg, seagreen, lawngreen)",
+        "linear-gradient(135deg, chocolate, peru)",
+        "linear-gradient(135deg, mediumvioletred, lavenderblush)",
+        "linear-gradient(135deg, crimson, lightsalmon)",
+        "linear-gradient(135deg, royalblue, lightsteelblue)",
+        "linear-gradient(135deg, fuchsia, powderblue)"
     ];
 
     document.getElementById("bgChanger").addEventListener("input", function() {
         document.body.style.background = gradients[this.value];
     });
 </script>
+
 
     <script src="script.js"></script>
 </body>
