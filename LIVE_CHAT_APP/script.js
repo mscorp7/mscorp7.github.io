@@ -1,4 +1,4 @@
-const ws = new WebSocket('https://nodechatapp-7dk4.onrender.com');
+const wss = new WebSocket('https://nodechatapp-7dk4.onrender.com');
 const messagesDiv = document.getElementById('messages');
 const messageInput = document.getElementById('messageInput');
 const sendButton = document.getElementById('sendButton');
@@ -29,14 +29,14 @@ sendButton.addEventListener('click', () => {
     const message = messageInput.value.trim();
     if (message) {
         const formattedMessage = `${userName}: ${message}`;
-        ws.send(JSON.stringify({ user: userName, message: message })); // Send username and message
+        wss.send(JSON.stringify({ user: userName, message: message })); // Send username and message
         appendMessage(formattedMessage, true); // Show own message
         messageInput.value = '';
     }
 });
 
 // Handle incoming messages
-ws.onmessage = (event) => {
+wss.onmessage = (event) => {
     try {
         const receivedData = JSON.parse(event.data); // Parse received JSON
         appendMessage(`${receivedData.user}: ${receivedData.message}`, false); // Show received message
@@ -45,18 +45,18 @@ ws.onmessage = (event) => {
     }
 };
 
-ws.onopen = () => {
+wss.onopen = () => {
     console.log('Connected to WebSocket server');
 };
 
-ws.onclose = () => {
+wss.onclose = () => {
     console.log('WebSocket connection closed.');
     setTimeout(() => {
         console.log('Reconnecting...');
-        ws = new WebSocket('ws://localhost:8080');
+        wss = new WebSocket('wss://localhost:8080');
     }, 3000);
 };
 
-ws.onerror = (error) => {
+wss.onerror = (error) => {
     console.error('WebSocket error:', error);
 };
