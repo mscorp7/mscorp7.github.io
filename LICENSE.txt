@@ -2,7 +2,7 @@ MS Corporation - Website License Agreement
 Version 20.0 | Last Updated: [January 2025]  
 
 1. **Ownership & Copyright**  
-   - This website (https://mscorp7.github.io/msweb/) and all its content, including text, images, code, and design, are the exclusive property of MS Corporation.  
+   - This website (https://mscorp7.github.io/) and all its content, including text, images, code, and design, are the exclusive property of MS Corporation.  
    - Unauthorized reproduction, distribution, or modification is strictly prohibited.  
 
 2. **Permitted Use**  
