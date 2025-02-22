@@ -2,11 +2,11 @@ self.addEventListener("install", (event) => {
     event.waitUntil(
         caches.open("mscorp-cache").then((cache) => {
             return cache.addAll([
-                "https://mscorp7.github.io/msweb/",
-                "https://mscorp7.github.io/msweb/index.html",
-                "https://mscorp7.github.io/msweb/manifest.json",
-                "https://mscorp7.github.io/msweb/192pxMS.png",
-                "https://mscorp7.github.io/msweb/512pxMS.png",
+                "https://mscorp7.github.io/",
+                "https://mscorp7.github.io/index.html",
+                "https://mscorp7.github.io/manifest.json",
+                "https://mscorp7.github.io/192pxMS.png",
+                "https://mscorp7.github.io/512pxMS.png",
             ]);
         })
     );
